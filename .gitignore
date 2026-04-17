@@ -33,6 +33,13 @@ node_modules/
 
 # Claude Code local
 .claude/settings.local.json
+.claude/settings.json
 .claude/memory/
 career-dashboard
 package-lock.json
+
+# Personal / local-only
+cv.md
+memory/
+tmp/
+batch/batch-runner.pid
