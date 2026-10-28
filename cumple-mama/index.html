@@ -11,8 +11,8 @@
     --oro: #e8c27a;
     --oro-claro: #f7e2b5;
     --rosa: #f4a7b9;
-    --noche: #1d1029;
-    --noche-2: #3a1f4d;
+    --noche: #0b1626;
+    --noche-2: #1d3554;
     --texto: #fff8ee;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,7 +48,7 @@
   .subtitulo {
     font-family: 'Playfair Display', serif; font-style: italic;
     font-size: clamp(1.05rem, 3.6vw, 1.5rem); max-width: 34ch; margin-top: 10px;
-    opacity: 0; animation: aparecer 1.6s 1.6s forwards; color: #f3e6ff;
+    opacity: 0; animation: aparecer 1.6s 1.6s forwards; color: #eef3fa;
   }
   #empezar {
     margin-top: 42px; position: relative; border: none; cursor: pointer;
@@ -71,7 +71,7 @@
   }
   #empezar:hover { transform: scale(1.06); }
   #empezar:active { transform: scale(.97); }
-  .pista { margin-top: 18px; font-size: .85rem; opacity: 0; animation: aparecer 1s 3.2s forwards; color: #cdb8dd; }
+  .pista { margin-top: 18px; font-size: .85rem; opacity: 0; animation: aparecer 1s 3.2s forwards; color: #b9c6d8; }
 
   @keyframes aparecer { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
   @keyframes brillo { to { background-position: -250% 0; } }
@@ -98,12 +98,12 @@
   .sin-foto {
     position: absolute; inset: 0; margin: auto; top: -12%; width: min(80vw, 520px); height: min(50vh, 380px);
     display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px;
-    border-radius: 10px; border: 2px dashed rgba(255,255,255,.4); color: #e9dcf3;
+    border-radius: 10px; border: 2px dashed rgba(255,255,255,.4); color: #dde6f0;
     background: linear-gradient(135deg, rgba(244,167,185,.25), rgba(232,194,122,.2)); font-size: .95rem;
   }
   .texto {
     position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 16px 64px; text-align: center;
-    background: linear-gradient(transparent, rgba(20,8,30,.85) 40%);
+    background: linear-gradient(transparent, rgba(8,16,30,.85) 40%);
   }
   .texto .anio {
     font-family: 'Playfair Display', serif; color: var(--oro); letter-spacing: .3em; font-size: .9rem;
@@ -126,14 +126,14 @@
   .controles { position: fixed; top: 14px; right: 14px; z-index: 7; display: flex; gap: 8px; }
   .controles button {
     width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3);
-    background: rgba(29,16,41,.55); color: var(--texto); font-size: 1.1rem; cursor: pointer; backdrop-filter: blur(6px);
+    background: rgba(11,22,38,.55); color: var(--texto); font-size: 1.1rem; cursor: pointer; backdrop-filter: blur(6px);
   }
 
   /* ---------- Final ---------- */
   #final {
     position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; padding: 24px 16px; opacity: 0; pointer-events: none; transition: opacity 2s ease; z-index: 8;
-    background: radial-gradient(ellipse at center, rgba(58,31,77,.92), rgba(29,16,41,.98));
+    background: radial-gradient(ellipse at center, rgba(29,53,84,.92), rgba(11,22,38,.98));
   }
   #final.activo { opacity: 1; pointer-events: auto; }
   #final h2 { font-family: 'Great Vibes', cursive; font-weight: 400; font-size: clamp(2.6rem, 9vw, 5rem); color: var(--oro-claro); }
@@ -193,12 +193,12 @@ const CONFIG = {
   mensajeFinal: 'Gracias por cada abrazo, cada consejo y cada sonrisa. Todo lo bonito que tenemos empezó contigo. Te queremos muchísimo.',
   firma: 'Tu familia',
   recuerdos: [
-    { foto: 'fotos/infancia.jpg', anio: 'LA PEQUEÑA', titulo: 'Así empezó todo', mensaje: 'Ahí estás, abrazada a tu perrito: desde pequeña cuidando con todo el corazón.' },
-    { foto: 'fotos/novia.jpg', anio: 'EL GRAN DÍA', titulo: 'Simplemente preciosa', mensaje: 'Esa mirada que lo dice todo… y que hoy sigue brillando igual.' },
+    { foto: 'fotos/infancia.jpg', anio: 'DE PEQUEÑAS', titulo: 'Creciendo juntas', mensaje: 'Las hermanas, siempre juntas, cuidando la una de la otra.' },
+    { foto: 'fotos/novia.jpg', anio: 'EL GRAN DÍA', titulo: 'Simplemente preciosa', mensaje: 'Esa mirada… que nos enamora a todos.' },
     { foto: 'fotos/boda.jpg', anio: 'SÍ, QUIERO', titulo: 'Así empezó nuestra historia', mensaje: 'El día en que empezó todo lo que hoy somos.' },
     { foto: 'fotos/brindis.jpg', anio: 'BRINDIS', titulo: 'Por un futuro juntos', mensaje: 'Brindasteis por lo que vendría… y mira todo lo que habéis construido.' },
-    { foto: 'fotos/bebe2.jpg', anio: 'LLEGÓ PAULA', titulo: 'Un amor nuevo', mensaje: 'Un beso que no ha dejado de darse desde aquel día.' },
-    { foto: 'fotos/bebe.jpg', anio: 'LLEGÓ DANI', titulo: 'El amor se multiplica', mensaje: 'En tus brazos, el lugar más seguro del mundo.' },
+    { foto: 'fotos/bebe2.jpg', anio: 'LLEGÓ PAULA', titulo: 'Un amor nuevo', mensaje: 'De repente llegó un pajarito para convertirse en el centro del cariño.' },
+    { foto: 'fotos/bebe.jpg', anio: 'LLEGÓ DANI', titulo: 'Apareció un regordete', mensaje: 'En tus brazos, el mejor lugar del mundo.' },
     { foto: 'fotos/mama.jpg', anio: 'MAMÁ', titulo: 'Siempre abrazándonos', mensaje: 'Entre flores y abrazos nos enseñaste lo que es el cariño.' },
     { foto: 'fotos/comida-familiar.jpg', anio: 'LOS NUESTROS', titulo: 'Mesa llena, corazón lleno', mensaje: 'Porque donde estás tú, siempre hay sitio para uno más.' },
     { foto: 'fotos/reforma.jpg', anio: 'MANOS A LA OBRA', titulo: 'Todo terreno', mensaje: 'Con gorro, guantes y sonrisa: no hay reto que se te resista.' },
@@ -223,7 +223,7 @@ const cv = document.getElementById('fx'), ctx = cv.getContext('2d');
 let W, H, particulas = [];
 function ajustar() { W = cv.width = innerWidth * devicePixelRatio; H = cv.height = innerHeight * devicePixelRatio; }
 addEventListener('resize', ajustar); ajustar();
-const colores = ['#e8c27a', '#f7e2b5', '#f4a7b9', '#ffffff', '#c9a0ff'];
+const colores = ['#e8c27a', '#f7e2b5', '#f4a7b9', '#ffffff', '#9fc3ea'];
 function nueva(tipo, x, y) {
   const d = devicePixelRatio;
   if (tipo === 'brillo') return { tipo, x: Math.random() * W, y: Math.random() * H, r: (Math.random() * 1.8 + .4) * d, fase: Math.random() * 6.28, vel: Math.random() * .03 + .01, vy: -(Math.random() * .2 + .05) * d };
