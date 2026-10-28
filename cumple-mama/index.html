@@ -188,6 +188,7 @@
 const CONFIG = {
   cancion: 'musica/cancion.mp3', // Viva la Vida - Coldplay
   bpm: 138,
+  primerTiempo: 0.785, // segundo exacto del primer golpe de la canción
   compasesPorFoto: 4,
   mensajeFinal: 'Gracias por cada abrazo, cada consejo y cada sonrisa. Lo mejor de mí te lo debo a ti. Te quiero muchísimo.',
   firma: 'Daniel',
@@ -203,7 +204,7 @@ const CONFIG = {
 };
 /* ===================================================================== */
 
-const COMPAS = 60 / CONFIG.bpm * 4;                 // segundos por compás
+const TIEMPO = 60 / CONFIG.bpm, COMPAS = TIEMPO * 4; // segundos por tiempo y por compás
 CONFIG.segundos = COMPAS * CONFIG.compasesPorFoto;  // segundos por foto
 
 document.getElementById('mensajeFinal').textContent = CONFIG.mensajeFinal;
@@ -277,7 +278,13 @@ let actual = -1, temporizador = null, pausado = false, inicioMusica = 0, vueltas
 const musicaSuena = () => !musica.paused && musica.readyState >= 2;
 const tiempoMusica = () => vueltas + musica.currentTime;
 // Si hay más fotos que canción, vuelve a empezarla sin perder el compás
-musica.addEventListener('ended', () => { vueltas += musica.duration; musica.currentTime = 0; musica.play().catch(() => {}); });
+musica.addEventListener('ended', () => {
+  // redondea al tiempo más cercano para que la segunda vuelta siga cayendo en el golpe
+  const total = vueltas + musica.duration;
+  const desfase = (total - inicioMusica + CONFIG.primerTiempo) % TIEMPO;
+  vueltas = total + (desfase > TIEMPO / 2 ? TIEMPO - desfase : -desfase);
+  musica.currentTime = 0; musica.play().catch(() => {});
+});
 
 // Programa el siguiente cambio usando el reloj de la canción (para que
 // caiga justo en el compás); sin música, usa un temporizador normal.
@@ -314,8 +321,8 @@ document.getElementById('empezar').addEventListener('click', e => {
   musica.volume = 1; musica.currentTime = 0; vueltas = 0; musica.play().catch(() => {});
   document.getElementById('inicio').classList.add('salir');
   // la primera foto entra justo al empezar el segundo compás
-  inicioMusica = COMPAS;
-  setTimeout(() => { corazones = false; document.getElementById('viaje').classList.add('activo'); siguiente(); }, COMPAS * 1000);
+  inicioMusica = CONFIG.primerTiempo + COMPAS;
+  setTimeout(() => { corazones = false; document.getElementById('viaje').classList.add('activo'); siguiente(); }, inicioMusica * 1000);
 });
 document.getElementById('btnPausa').addEventListener('click', e => {
   pausado = !pausado;
@@ -329,8 +336,8 @@ document.getElementById('btnSonido').addEventListener('click', e => {
 document.getElementById('otraVez').addEventListener('click', () => {
   document.getElementById('final').classList.remove('activo');
   clearTimeout(temporizador); actual = -1; corazones = false;
-  musica.volume = 1; musica.currentTime = 0; vueltas = 0; inicioMusica = 0;
-  musica.play().then(siguiente, siguiente);
+  musica.volume = 1; musica.currentTime = 0; vueltas = 0; inicioMusica = CONFIG.primerTiempo;
+  musica.play().then(() => setTimeout(siguiente, CONFIG.primerTiempo * 1000), siguiente);
 });
 </script>
 </body>
