@@ -174,18 +174,21 @@
   <button id="otraVez">↺ Ver de nuevo</button>
 </section>
 
-<audio id="musica" preload="auto" loop></audio>
+<audio id="musica" preload="auto"></audio>
 
 <script>
 /* =====================================================================
    PERSONALIZA AQUÍ
    - Pon las fotos en la carpeta "fotos/" y la canción en "musica/".
    - Cada recuerdo: foto, año (o etapa), título y mensaje.
-   - "segundos" es lo que dura cada foto en pantalla.
+   - Las fotos cambian al ritmo de la canción: "bpm" es su tempo y
+     "compasesPorFoto" cuántos compases (de 4 tiempos) dura cada foto.
+     Viva la Vida (Coldplay) va a 138 bpm → 4 compases ≈ 7 segundos.
    ===================================================================== */
 const CONFIG = {
-  cancion: 'musica/cancion.mp3',
-  segundos: 7,
+  cancion: 'musica/cancion.mp3', // Viva la Vida - Coldplay
+  bpm: 138,
+  compasesPorFoto: 4,
   mensajeFinal: 'Gracias por cada abrazo, cada consejo y cada sonrisa. Lo mejor de mí te lo debo a ti. Te quiero muchísimo.',
   firma: 'Daniel',
   recuerdos: [
@@ -199,6 +202,9 @@ const CONFIG = {
   ]
 };
 /* ===================================================================== */
+
+const COMPAS = 60 / CONFIG.bpm * 4;                 // segundos por compás
+CONFIG.segundos = COMPAS * CONFIG.compasesPorFoto;  // segundos por foto
 
 document.getElementById('mensajeFinal').textContent = CONFIG.mensajeFinal;
 document.getElementById('firma').textContent = CONFIG.firma ? '— ' + CONFIG.firma : '';
@@ -267,7 +273,22 @@ CONFIG.recuerdos.forEach((r, i) => {
 });
 const diapos = [...cont.children], puntos = [...linea.querySelectorAll('.punto')];
 const musica = document.getElementById('musica'); musica.src = CONFIG.cancion;
-let actual = -1, temporizador = null, pausado = false;
+let actual = -1, temporizador = null, pausado = false, inicioMusica = 0, vueltas = 0;
+const musicaSuena = () => !musica.paused && musica.readyState >= 2;
+const tiempoMusica = () => vueltas + musica.currentTime;
+// Si hay más fotos que canción, vuelve a empezarla sin perder el compás
+musica.addEventListener('ended', () => { vueltas += musica.duration; musica.currentTime = 0; musica.play().catch(() => {}); });
+
+// Programa el siguiente cambio usando el reloj de la canción (para que
+// caiga justo en el compás); sin música, usa un temporizador normal.
+function programar() {
+  let espera = CONFIG.segundos;
+  if (musicaSuena()) {
+    const objetivo = inicioMusica + (actual + 1) * CONFIG.segundos;
+    espera = Math.max(.3, objetivo - tiempoMusica());
+  }
+  temporizador = setTimeout(siguiente, espera * 1000);
+}
 
 function mostrar(i) {
   diapos.forEach((d, j) => d.classList.toggle('visible', j === i));
@@ -278,7 +299,7 @@ function siguiente() {
   actual++;
   if (actual >= diapos.length) return terminar();
   mostrar(actual);
-  temporizador = setTimeout(siguiente, CONFIG.segundos * 1000);
+  programar();
 }
 function terminar() {
   document.getElementById('final').classList.add('activo');
@@ -290,15 +311,17 @@ function terminar() {
 
 document.getElementById('empezar').addEventListener('click', e => {
   explosion(e.clientX, e.clientY);
-  musica.volume = 1; musica.currentTime = 0; musica.play().catch(() => {});
+  musica.volume = 1; musica.currentTime = 0; vueltas = 0; musica.play().catch(() => {});
   document.getElementById('inicio').classList.add('salir');
-  setTimeout(() => { corazones = false; document.getElementById('viaje').classList.add('activo'); siguiente(); }, 1300);
+  // la primera foto entra justo al empezar el segundo compás
+  inicioMusica = COMPAS;
+  setTimeout(() => { corazones = false; document.getElementById('viaje').classList.add('activo'); siguiente(); }, COMPAS * 1000);
 });
 document.getElementById('btnPausa').addEventListener('click', e => {
   pausado = !pausado;
   e.currentTarget.textContent = pausado ? '▶' : '❚❚';
   if (pausado) { clearTimeout(temporizador); musica.pause(); }
-  else { musica.play().catch(() => {}); temporizador = setTimeout(siguiente, 1500); }
+  else { musica.play().then(programar, programar); }
 });
 document.getElementById('btnSonido').addEventListener('click', e => {
   musica.muted = !musica.muted; e.currentTarget.textContent = musica.muted ? '🔇' : '🔊';
@@ -306,8 +329,8 @@ document.getElementById('btnSonido').addEventListener('click', e => {
 document.getElementById('otraVez').addEventListener('click', () => {
   document.getElementById('final').classList.remove('activo');
   clearTimeout(temporizador); actual = -1; corazones = false;
-  musica.volume = 1; musica.currentTime = 0; musica.play().catch(() => {});
-  siguiente();
+  musica.volume = 1; musica.currentTime = 0; vueltas = 0; inicioMusica = 0;
+  musica.play().then(siguiente, siguiente);
 });
 </script>
 </body>
