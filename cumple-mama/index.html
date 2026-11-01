@@ -101,7 +101,7 @@
   }
   .marco { overflow: hidden; }
   .polaroid img { display: block; max-width: min(84vw, 560px); max-height: calc(100vh - 340px); object-fit: contain; }
-  .collage .polaroid img { max-width: min(50vw, 300px); max-height: 25vh; }
+  .collage .polaroid img { max-width: min(45vw, 300px); max-height: 25vh; }
   .collage .pos { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); }
   .escena.visible .zona.unica .polaroid, .pos.cae .polaroid { animation: aterriza .75s cubic-bezier(.2,.9,.3,1.2) forwards; }
   .escena.visible .zona.unica .polaroid img { animation: kenburns 8s 0.6s ease-out forwards; }
@@ -241,7 +241,15 @@ const CONFIG = {
 
     { foto: 'fotos/bebe2.jpg', texto: 'De repente llegó una pajarito para convertirse en el centro del cariño.' },
     { foto: 'fotos/bebe.jpg', texto: 'Y apareció un regordete… En tus brazos, el mejor lugar del mundo.' },
+    { foto: 'fotos/crecer-biberon.jpg', texto: 'Biberones, chupetes y noches en vela: tus días se llenaron de nosotros.' },
+    { foto: 'fotos/crecer-navidad.jpg', texto: 'Las primeras Navidades, con el regalo más bonito en brazos.' },
     { foto: 'fotos/mama.jpg', texto: 'Entre flores y abrazos nos enseñaste lo que es el cariño.' },
+
+    { puente: 'Y fuimos creciendo…' },
+    { collage: ['fotos/crecer-comida.jpg', 'fotos/crecer-noche.jpg', 'fotos/crecer-paseo.jpg', 'fotos/crecer-flores.jpg'],
+      texto: 'Comidas en familia, paseos, primaveras… y vosotros siempre a nuestro lado.' },
+    { foto: 'fotos/crecer-piscina.jpg', texto: 'Veranos de piscina, gafas de bucear y risas sin fin.' },
+    { foto: 'fotos/crecer-comunion.jpg', texto: 'Celebrando juntos cada momento importante.' },
 
     { puente: 'Y los años fueron pasando…' },
     { collage: ['fotos/reforma.jpg', 'fotos/menorca.jpg', 'fotos/escapada.jpg'],
