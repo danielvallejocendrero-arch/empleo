@@ -82,8 +82,9 @@
   /* ---------- Viaje: escenas tipo historieta ---------- */
   #viaje { position: fixed; inset: 0; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
   #viaje.activo { opacity: 1; pointer-events: auto; }
-  .escena { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease; overflow: hidden; }
-  .escena.visible { opacity: 1; }
+  .escena { position: absolute; inset: 0; opacity: 0; transform: translateX(7%); transition: opacity 1.2s ease, transform 1.4s ease; overflow: hidden; }
+  .escena.visible { opacity: 1; transform: none; }
+  .escena.pasada { transform: translateX(-7%); }
   .fondo {
     position: absolute; inset: -40px; background-size: cover; background-position: center;
     filter: blur(28px) brightness(.4);
@@ -133,17 +134,10 @@
   .l { opacity: 0; transition: opacity .12s; }
   .l.on { opacity: 1; }
 
-  /* portada de capítulo */
-  .cap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 16px; }
-  .cap .num { font-family: 'Lato', sans-serif; letter-spacing: .45em; text-transform: uppercase; font-size: .85rem; color: var(--oro); opacity: 0; }
-  .cap .titulo { font-family: 'Great Vibes', cursive; font-size: clamp(3rem, 14vw, 5.2rem); color: var(--oro-claro); line-height: 1.1; margin-top: 8px; }
-  .cap .titulo span { display: inline-block; opacity: 0; margin: 0 .12em; }
-  .cap .raya { width: 0; height: 2px; margin-top: 14px; background: linear-gradient(90deg, transparent, var(--oro), transparent); }
-  .escena.visible .cap .num { animation: aparecer .8s forwards; }
-  .escena.visible .cap .titulo span { animation: pop .5s cubic-bezier(.2,.9,.3,1.5) forwards; }
-  .escena.visible .cap .raya { animation: raya 1.2s .9s ease-out forwards; }
-  @keyframes pop { from { opacity: 0; transform: scale(.3) rotate(-8deg); } to { opacity: 1; transform: none; } }
-  @keyframes raya { to { width: min(60vw, 280px); } }
+  /* frase puente entre etapas: solo la cartela, grande y centrada */
+  .puente-zona { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 16px; }
+  .puente-zona .cartela { position: relative; left: auto; right: auto; bottom: auto; transform: rotate(-2deg); padding: 16px 22px; }
+  .puente-zona .cartela p { font-size: clamp(2rem, 8.5vw, 2.8rem); }
 
   /* Barra de progreso tipo línea de vida */
   #linea { position: fixed; left: 16px; right: 16px; bottom: 22px; height: 3px; background: rgba(255,255,255,.18); border-radius: 3px; z-index: 6; }
@@ -212,7 +206,7 @@
    PERSONALIZA AQUÍ
    - Fotos en "fotos/" y la canción en "musica/".
    - La historia es una lista de escenas, de tres tipos:
-       { capitulo: 'Capítulo 1', titulo: '...' }        portada de capítulo
+       { puente: '...' }                                 frase que une una etapa con la siguiente
        { foto: 'fotos/x.jpg', texto: '...', sello: '' }  una foto con su cartela
        { collage: ['fotos/a.jpg', ...], texto: '...' }    varias fotos seguidas
    - Todo va al ritmo de la canción (138 bpm): cada escena dura un número
@@ -222,32 +216,34 @@ const CONFIG = {
   cancion: 'musica/cancion.mp3', // Viva la Vida - Coldplay
   bpm: 138,
   primerTiempo: 0.785, // segundo exacto del primer golpe de la canción
-  compases: { capitulo: 2, foto: 4, collageExtra: 4 },
+  compases: { puente: 2, puenteLargo: 3, foto: 4, collageExtra: 4 },
   mensajeFinal: 'Gracias por cada abrazo, cada consejo y cada sonrisa. Todo lo bonito que tenemos empezó contigo. Te queremos muchísimo.',
   firma: 'Tu familia',
   historia: [
-    { capitulo: 'Capítulo 1', titulo: 'Los primeros años' },
+    { puente: 'Érase una vez…' },
     { foto: 'fotos/bebe-mama.jpg', texto: 'Llegaste a una familia que te quiere con locura.' },
     { foto: 'fotos/con-papa.jpg', texto: 'Un padre con dos hijas preciosas.' },
     { foto: 'fotos/con-mama.jpg', texto: 'Una madre con cariño infinito.' },
     { foto: 'fotos/infancia.jpg', texto: 'Con una hermana que te cuida mucho.' },
 
-    { capitulo: 'Capítulo 2', titulo: 'La juventud' },
+    { puente: 'Y la niña fue creciendo…' },
     { collage: ['fotos/mirador.jpg', 'fotos/acantilado.jpg', 'fotos/banco.jpg', 'fotos/fiesta.jpg'],
-      texto: 'Y fuiste creciendo y conociendo a nuevas personas. Viviendo nuevas experiencias, pero siempre siendo tú.' },
+      texto: 'Conociendo a nuevas personas, viviendo nuevas experiencias… pero siempre siendo tú.' },
     { foto: 'fotos/paris.jpg', texto: 'Y ese famoso viaje inesperado a París…', sello: 'PARÍS ✈' },
 
-    { capitulo: 'Capítulo 3', titulo: 'El amor' },
-    { foto: 'fotos/novia.jpg', texto: 'Esa mirada… que nos enamora a todos.' },
-    { foto: 'fotos/boda.jpg', texto: 'El día en que empezó todo lo que hoy somos.' },
+    { foto: 'fotos/novios-noche.jpg', texto: 'Y de repente apareció un sueco en un pueblo a las afueras de Madrid…' },
+    { foto: 'fotos/novios-laguna.jpg', texto: '…y al iros conociendo supisteis que erais la persona indicada para cada uno.' },
+    { collage: ['fotos/novios-elegantes.jpg', 'fotos/novios-paseo.jpg'],
+      texto: 'Vivisteis muchos momentos juntos, hasta que decidisteis dar el paso…' },
+    { foto: 'fotos/boda.jpg', texto: 'El novio y la novia se convirtieron en marido y mujer.' },
+    { foto: 'fotos/novia.jpg', texto: 'Y ese día estabas espectacular.' },
     { foto: 'fotos/brindis.jpg', texto: 'Brindasteis por lo que vendría… y mira todo lo que habéis construido.' },
 
-    { capitulo: 'Capítulo 4', titulo: 'Mamá' },
     { foto: 'fotos/bebe2.jpg', texto: 'De repente llegó una pajarito para convertirse en el centro del cariño.' },
     { foto: 'fotos/bebe.jpg', texto: 'Y apareció un regordete… En tus brazos, el mejor lugar del mundo.' },
     { foto: 'fotos/mama.jpg', texto: 'Entre flores y abrazos nos enseñaste lo que es el cariño.' },
 
-    { capitulo: 'Capítulo 5', titulo: 'Mil aventuras' },
+    { puente: 'Y los años fueron pasando…' },
     { collage: ['fotos/reforma.jpg', 'fotos/menorca.jpg', 'fotos/escapada.jpg'],
       texto: 'Obras, viajes, escapadas… contigo cualquier plan se convierte en aventura.' },
     { foto: 'fotos/comida-familiar.jpg', texto: 'Porque donde estás tú, siempre hay sitio para uno más.' },
@@ -311,8 +307,8 @@ function explosion(x, y, n = 160) { for (let i = 0; i < n; i++) particulas.push(
 
 // ---------- Escenas ----------
 const cont = document.getElementById('diapos'), linea = document.getElementById('linea');
-const tipo = e => e.capitulo ? 'capitulo' : e.collage ? 'collage' : 'foto';
-const compasesDe = e => tipo(e) === 'capitulo' ? CONFIG.compases.capitulo
+const tipo = e => e.puente ? 'puente' : e.collage ? 'collage' : 'foto';
+const compasesDe = e => tipo(e) === 'puente' ? (e.puente.length > 30 ? CONFIG.compases.puenteLargo : CONFIG.compases.puente)
   : tipo(e) === 'collage' ? e.collage.length + CONFIG.compases.collageExtra : CONFIG.compases.foto;
 // segundo (contado desde la primera escena) en que empieza cada escena
 const inicios = [0];
@@ -320,7 +316,7 @@ CONFIG.historia.forEach(e => inicios.push(inicios[inicios.length - 1] + compases
 
 // posiciones de las fotos en los collages (x, y, giro)
 const HUECOS = {
-  2: [[30, 38, -6], [70, 58, 5]],
+  2: [[34, 28, -6], [66, 68, 5]],
   3: [[30, 27, -6], [70, 42, 5], [36, 75, 3]],
   4: [[29, 25, -7], [71, 30, 6], [31, 72, 5], [70, 74, -4]],
   5: [[28, 22, -7], [72, 26, 6], [50, 50, -2], [28, 78, 5], [72, 76, -4]]
@@ -345,13 +341,9 @@ function cartela(texto) {
 
 CONFIG.historia.forEach((e, i) => {
   const d = document.createElement('div'); d.className = 'escena ' + tipo(e);
-  if (tipo(e) === 'capitulo') {
-    d.innerHTML = '<div class="fondo azul"></div><div class="trama"></div><div class="cap"><div class="num"></div><div class="titulo"></div><div class="raya"></div></div>';
-    d.querySelector('.num').textContent = e.capitulo;
-    e.titulo.split(' ').forEach((pal, k) => {
-      const sp = document.createElement('span'); sp.textContent = pal; sp.style.animationDelay = (.35 + k * .22) + 's';
-      d.querySelector('.titulo').appendChild(sp);
-    });
+  if (tipo(e) === 'puente') {
+    d.innerHTML = '<div class="fondo azul"></div><div class="trama"></div><div class="puente-zona"></div>';
+    d.querySelector('.puente-zona').appendChild(cartela(e.puente));
   } else if (tipo(e) === 'collage') {
     d.innerHTML = '<div class="fondo azul"></div><div class="trama"></div><div class="zona"></div>';
     const huecos = HUECOS[e.collage.length] || HUECOS[5];
@@ -419,7 +411,7 @@ function completar(d) {
 function mostrar(i) {
   timersEscena.forEach(clearTimeout); timersEscena = [];
   const d = escenas[i]; reiniciar(d); void d.offsetWidth; // reinicia las animaciones
-  escenas.forEach((x, j) => x.classList.toggle('visible', j === i));
+  escenas.forEach((x, j) => { x.classList.toggle('visible', j === i); x.classList.toggle('pasada', j < i); });
   puntos.forEach((p, j) => p.classList.toggle('hecho', j <= i));
   linea.querySelector('.avance').style.width = (escenas.length > 1 ? i / (escenas.length - 1) * 100 : 100) + '%';
   const e = CONFIG.historia[i];
@@ -427,7 +419,9 @@ function mostrar(i) {
     // una foto por compás, cayendo justo en el golpe
     d.querySelectorAll('.pos').forEach((pos, k) => despues(k * COMPAS, () => pos.classList.add('cae')));
     escribir(d, .8);
-  } else if (tipo(e) === 'foto') {
+  } else if (tipo(e) === 'puente') {
+    escribir(d, .3);
+  } else {
     escribir(d, .7);
     despues(COMPAS * 1.5, () => d.querySelector('.sello')?.classList.add('ver'));
   }
