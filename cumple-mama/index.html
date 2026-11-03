@@ -119,27 +119,37 @@
   @keyframes revela { from { opacity: 0; transform: rotate(var(--rot)) scale(.94); } to { opacity: 1; transform: rotate(var(--rot)) scale(1); } }
   @keyframes acerca { from { opacity: 1; transform: rotate(var(--rot)) scale(1); } to { opacity: 1; transform: rotate(var(--rot)) scale(1.05); } }
 
-  /* varias fotos a la vez, grandes */
-  .esc.grupo { display: grid; gap: 14px; padding: 4px 14px; grid-template: 1fr 1fr / 1fr; }
+  /* varias fotos a la vez, grandes y juntas en el centro */
+  .esc.grupo { display: grid; gap: 14px; padding: 4px 14px; grid-template: 1fr 1fr / 1fr; max-width: 1100px; margin: 0 auto; }
+  .esc.grupo.n1 { grid-template: 1fr / 1fr; }
   .esc.grupo.n3 { grid-template: "a a" 1.25fr "b c" 1fr / 1fr 1fr; }
   .esc.grupo.n3 .celda:first-child { grid-area: a; }
   .esc.grupo.n4 { grid-template: 1fr 1fr / 1fr 1fr; }
+  .celda { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 0; }
+  .celda .foto { max-width: 100%; max-height: 100%; }
+  /* en el móvil (vertical) */
+  .n2 .celda:nth-child(1) { align-items: flex-end; }  .n2 .celda:nth-child(2) { align-items: flex-start; }
+  .n3 .celda:nth-child(1) { align-items: flex-end; }
+  .n3 .celda:nth-child(2) { align-items: flex-start; justify-content: flex-end; }
+  .n3 .celda:nth-child(3) { align-items: flex-start; justify-content: flex-start; }
+  .n4 .celda:nth-child(odd) { justify-content: flex-end; }  .n4 .celda:nth-child(even) { justify-content: flex-start; }
+  .n4 .celda:nth-child(-n+2) { align-items: flex-end; }   .n4 .celda:nth-child(n+3) { align-items: flex-start; }
+  /* en pantallas apaisadas, en fila */
   @media (min-aspect-ratio: 1/1) {
     .esc.grupo { grid-template: 1fr / 1fr 1fr; }
     .esc.grupo.n3 { grid-template: "a b c" 1fr / 1fr 1fr 1fr; }
     .esc.grupo.n4 { grid-template: 1fr 1fr / 1fr 1fr; }
+    .n2 .celda { align-items: center; }
+    .n2 .celda:nth-child(1) { justify-content: flex-end; }  .n2 .celda:nth-child(2) { justify-content: flex-start; }
+    .n3 .celda { align-items: center !important; }
+    .n3 .celda:nth-child(1) { justify-content: flex-end; } .n3 .celda:nth-child(2) { justify-content: center; } .n3 .celda:nth-child(3) { justify-content: flex-start; }
   }
-  .celda { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 0; }
-  .celda .foto { max-width: 100%; max-height: 100%; }
 
-  /* el camino: las fotos de los niños creciendo pasan de derecha a izquierda */
-  .esc.camino { overflow: visible; }
-  .tira { position: absolute; top: 0; bottom: 0; left: 0; display: flex; align-items: center; gap: 7vw; padding: 0 4vw; will-change: transform; }
-  .tira::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 3px dashed rgba(255,246,216,.35); }
-  .paso { position: relative; flex: none; }
-  .paso:nth-child(odd) { transform: translateY(-11vh); }
-  .paso:nth-child(even) { transform: translateY(11vh); }
-  .paso .foto { max-height: 31vh; max-width: min(60vw, 430px); }
+  /* el camino: todas las fotos de los niños en un solo plano, en zigzag, de pequeños a mayores */
+  .esc.camino svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .esc.camino polyline { fill: none; stroke: rgba(255,246,216,.45); stroke-width: 3; stroke-dasharray: 8 9; stroke-linecap: round; }
+  .paso { position: absolute; transform: translate(-50%, -50%); }
+  .paso .foto { border-width: 5px; border-bottom-width: 15px; }
 
   /* sello de pasaporte (guiño a un viaje) */
   .sello {
@@ -157,7 +167,7 @@
   }
   .cartela p { font-family: 'Caveat', cursive; font-weight: 600; font-size: clamp(1.4rem, 5.4vw, 1.85rem); line-height: 1.2; }
   .cartela.ver { animation: vineta .4s cubic-bezier(.2,.9,.3,1.4) forwards; }
-  .cartela.sale { opacity: 0; transition: opacity .3s; }
+  .cartela.sale { opacity: 0; animation: none; }
   @keyframes vineta { from { opacity: 0; transform: rotate(-1.2deg) scale(.5); } to { opacity: 1; transform: rotate(-1.2deg) scale(1); } }
   #narrador { position: absolute; left: 16px; right: 16px; bottom: 26px; margin: 0 auto; }
   .l { opacity: 0; transition: opacity .1s; }
@@ -187,8 +197,6 @@
   #final h2 { font-family: 'Great Vibes', cursive; font-weight: 400; font-size: clamp(2.6rem, 9vw, 5rem); color: var(--oro-claro); }
   #final p { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.05rem, 3.6vw, 1.4rem); max-width: 36ch; margin-top: 14px; line-height: 1.5; }
   #final .firma { font-family: 'Great Vibes', cursive; font-size: 2rem; color: var(--rosa); margin-top: 18px; font-style: normal; }
-  #final .continuara { font-family: 'Caveat', cursive; font-size: 1.9rem; color: var(--oro); margin-top: 10px; opacity: 0; transform: rotate(-4deg); }
-  #final.activo .continuara { animation: aparecer 1s 2.2s forwards; }
   #otraVez { margin-top: 34px; background: transparent; border: 1px solid var(--oro); color: var(--oro-claro); padding: 12px 28px; border-radius: 999px; font-family: 'Lato', sans-serif; cursor: pointer; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -225,7 +233,6 @@
   <h2>¡Feliz cumpleaños!</h2>
   <p id="mensajeFinal"></p>
   <p class="firma" id="firma"></p>
-  <p class="continuara">Continuará…</p>
   <button id="otraVez">↺ Ver de nuevo</button>
 </section>
 
@@ -240,7 +247,7 @@
        { foto: 'fotos/x.jpg', texto: '...' }             una foto sola
        { foto: ..., destacar: true }                      foto importante: aparece despacio
        { grupo: ['fotos/a.jpg', ...], texto: '...' }      2, 3 o 4 fotos a la vez
-       { camino: ['fotos/a.jpg', ...], textos: [...] }    fotos en fila pasando, como un camino
+       { camino: ['fotos/a.jpg', ...], textos: [...] }    todas a la vez en zigzag, como un camino
      Con  textos: ['...', '...']  la frase va cambiando durante la escena.
      Si una escena no lleva frase, se queda la anterior.
    - Duración en tiempos de la canción (138 bpm → 1 tiempo ≈ 0,43 s): t: 10
@@ -250,7 +257,7 @@ const CONFIG = {
   bpm: 138,
   primerTiempo: 0.785, // segundo exacto del primer golpe de la canción
   tiempos: { puente: 7, foto: 8, fotoSinTexto: 5, porFoto: 3 },
-  mensajeFinal: 'Gracias por cada abrazo, cada consejo y cada sonrisa. Todo lo bonito que tenemos empezó contigo. Te queremos muchísimo.',
+  mensajeFinal: 'Gracias por cada abrazo, cada beso y cada sonrisa. Todo lo bonito que tenemos es gracias a ti.',
   firma: 'Tu familia',
   historia: [
     // 1 · La infancia: despacio, con los abuelos
@@ -268,51 +275,55 @@ const CONFIG = {
 
     // 3 · Papá
     { foto: 'fotos/novios-noche.jpg', texto: 'Hasta que, sin esperarlo, apareció un sueco en Bustarviejo…', destacar: true, t: 13 },
-    { grupo: ['fotos/novios-laguna.jpg', 'fotos/novios-paseo.jpg', 'fotos/boda-tia.jpg', 'fotos/novios-elegantes.jpg'], t: 18,
+    { grupo: ['fotos/novios-laguna.jpg', 'fotos/novios-paseo.jpg', 'fotos/novios-elegantes.jpg'], t: 15,
       textos: ['Os fuisteis conociendo…', '…hasta llegar al momento decisivo.'] },
-    { foto: 'fotos/boda.jpg', texto: 'El novio y la novia se convirtieron en marido y mujer.', destacar: true, t: 13 },
-    { foto: 'fotos/brindis.jpg' },
+    { foto: 'fotos/boda.jpg', texto: 'El novio y la novia se convirtieron en marido y mujer.', destacar: true, t: 10 },
+    { foto: 'fotos/brindis.jpg', t: 3 },
     { foto: 'fotos/novia.jpg', texto: 'Y ese día tú estabas preciosa.', destacar: true, t: 13 },
 
     // 4 · Llegamos nosotros, y el camino creciendo
     { foto: 'fotos/bebe2.jpg', texto: 'Seguisteis creciendo juntos y al año llegó Paula, una pajarito que se convirtió en el centro del cariño.', destacar: true, t: 14 },
+    // cuando llegue la foto del pajarito, la frase se reparte así:
+    // { foto: 'fotos/bebe2.jpg', texto: 'Seguisteis creciendo juntos y al año llegó Paula…', destacar: true, t: 11 },
+    // { foto: 'fotos/pajarito.jpg', texto: '…una pajarito que se convirtió en el centro del cariño.', destacar: true, t: 11 },
     { foto: 'fotos/bebe.jpg', texto: 'Y como no teníais suficiente y queríais el niño… llegó un regordete.', destacar: true, t: 13 },
     { camino: ['fotos/crecer-biberon.jpg', 'fotos/crecer-navidad.jpg', 'fotos/cumple-bebes.jpg', 'fotos/mama.jpg',
                'fotos/crecer-paseo.jpg', 'fotos/crecer-noche.jpg', 'fotos/crecer-piscina.jpg', 'fotos/deberes.jpg',
-               'fotos/crecer-comunion.jpg', 'fotos/crecer-flores.jpg', 'fotos/crecer-comida.jpg'], t: 34,
+               'fotos/crecer-comunion.jpg', 'fotos/crecer-flores.jpg', 'fotos/crecer-comida.jpg'], t: 42,
       textos: ['Así se fue formando la familia…', 'Los niños fueron creciendo, y vosotros con ellos…', 'Llegaron los colegios, los veranos de piscina, las comuniones…'] },
 
     // 5 · Las amistades
     { foto: 'fotos/mati.jpg', texto: 'En la nueva casa conociste nuevas amistades, como Mati, y vuestros días de mercadillo…', destacar: true, t: 12 },
     { foto: 'fotos/yoli.jpg', texto: '…o Yoli, una mujer con un corazón enorme.', destacar: true, t: 11 },
-    { grupo: ['fotos/amigas-santuario.jpg', 'fotos/amigos-norte.jpg', 'fotos/con-tia.jpg'], t: 15,
-      textos: ['Escapadas con amigos…', '…y tu hermana, siempre a tu lado.'] },
+    { grupo: ['fotos/amigas-santuario.jpg', 'fotos/amigos-norte.jpg'], t: 9, texto: 'Escapadas con amigos…' },
+    { grupo: ['fotos/boda-tia.jpg', 'fotos/con-tia.jpg'], t: 9, texto: '…y tu hermana, siempre a tu lado.' },
 
     // 6 · Viajes en familia
     { grupo: ['fotos/holanda-copa.jpg', 'fotos/holanda-bicis.jpg', 'fotos/amsterdam-padres.jpg'], t: 13,
       texto: 'Y muchos viajes en familia… ¡bebiendo cerveza en Holanda!' },
-    { grupo: ['fotos/estatua.jpg', 'fotos/florencia-duomo.jpg', 'fotos/florencia-catedral.jpg'], t: 12,
-      texto: '…y algún que otro ligue por el camino.' },
     { grupo: ['fotos/lanzarote.jpg', 'fotos/playa-noche.jpg', 'fotos/biarritz.jpg', 'fotos/grecia.jpg'], t: 18,
       textos: ['Volcanes en Lanzarote…', '…playas en Valencia…', '…y ruinas en Grecia.'] },
-    { grupo: ['fotos/salou.jpg', 'fotos/menorca.jpg', 'fotos/escapada.jpg', 'fotos/reforma.jpg'], t: 13,
+    { foto: 'fotos/estatua.jpg', texto: '…y algún que otro ligue por el camino.', destacar: true, t: 12 },
+    { grupo: ['fotos/florencia-duomo.jpg', 'fotos/florencia-catedral.jpg', 'fotos/salou.jpg', 'fotos/menorca.jpg'], t: 13,
       texto: 'Y tantas escapadas más…' },
-    { grupo: ['fotos/filomena.jpg', 'fotos/casa-mercedes.jpg'], t: 11,
-      texto: 'Y hasta disfrutamos de la nevada histórica de Madrid.' },
+    { grupo: ['fotos/escapada.jpg', 'fotos/casa-mercedes.jpg'], t: 7 },
+    { foto: 'fotos/filomena.jpg', texto: 'Y hasta disfrutamos de la nevada histórica de Madrid.', t: 10 },
+    { foto: 'fotos/reforma.jpg', texto: 'Y como siempre, de vez en cuando alguna chapuza teníamos que hacer.', t: 10 },
 
     // 7 · La familia crece
-    { grupo: ['fotos/boda-sandra.jpg', 'fotos/grad-paula.jpg', 'fotos/grad-dani.jpg'], t: 18,
-      textos: ['Mientras tanto hubo bodas en la familia, como la de Sandra…', '…llegaron las graduaciones: primero Paula…', '…y después Dani.'] },
+    { grupo: ['fotos/grad-paula.jpg', 'fotos/grad-dani.jpg'], t: 16,
+      textos: ['Llegaron las graduaciones: primero Paula…', '…y después Dani.'] },
     { foto: 'fotos/boda-familia.jpg', texto: 'Y la boda más reciente, la de Álex.' },
+    { foto: 'fotos/los-cuatro.jpg', t: 6 },
     { foto: 'fotos/boda-alex-todos.jpg', texto: 'La familia no paraba de crecer, y ahora tenemos nuevos integrantes…', destacar: true, t: 13 },
     { grupo: ['fotos/casa-tia.jpg', 'fotos/comida-familiar.jpg'], t: 8 },
     { grupo: ['fotos/navidad-selfie.jpg', 'fotos/navidad-brindis.jpg', 'fotos/navidad-gato.jpg'], t: 14,
       textos: ['Y las Navidades, cada año…', '…hasta que llegó un nuevo integrante: ¡Aslan!'] },
 
     // 8 · Hoy
-    { grupo: ['fotos/los-cuatro.jpg', 'fotos/aeropuerto.jpg'], t: 13,
-      texto: 'Ahora los niños ya son mayores: trabajan… y uno hasta se ha ido de casa, un poquito lejos.' },
-    { foto: 'fotos/abrazo.jpg', texto: '…pero vosotros seguís siendo los mejores padres, como desde el primer día.', t: 11 },
+    { foto: 'fotos/aeropuerto-ahora.jpg', texto: 'Ahora los niños ya son mayores: trabajan… y uno hasta se ha ido de casa, un poquito lejos.', t: 12 },
+    { grupo: ['fotos/rio.jpg', 'fotos/abrazo.jpg'], t: 13,
+      texto: '…pero vosotros seguís siendo los mejores padres, como desde el primer día.' },
     { foto: 'fotos/hoy.jpg', texto: 'Y ahora, 60 añitos… y lo mejor está por llegar.', destacar: true, t: 16 }
   ]
 };
@@ -441,7 +452,7 @@ function mostrar(i) {
   [...mesa.children].forEach(c => { c.classList.add('sale'); setTimeout(() => c.remove(), 1300); });
 
   if (p.puente) {
-    narrador.classList.add('sale'); ponerFondo(null);
+    narrador.classList.remove('ver'); narrador.classList.add('sale'); ponerFondo(null);
     puente.classList.add('on'); escribir(cartelaPuente, p.puente, .3);
     return;
   }
@@ -464,27 +475,31 @@ function mostrar(i) {
     } else pieza.classList.add('cae');
   } else if (p.grupo) {
     // varias fotos a la vez: van apareciendo una tras otra, al ritmo
-    esc.className = 'esc grupo n' + p.grupo.length;
+    esc.className = 'esc grupo n' + Math.min(p.grupo.length, 4);
     p.grupo.forEach((src, k) => {
       const celda = document.createElement('div'); celda.className = 'celda';
       const im = imagen(src, azar(-3, 3)); celda.appendChild(im); esc.appendChild(celda);
       despues(k * CONFIG.tiempos.porFoto * TIEMPO, () => im.classList.add('cae'));
     });
   } else if (p.camino) {
-    // las fotos en fila, avanzando como un camino de pequeños a mayores
+    // todas en un plano, en zigzag: fila a la derecha, la siguiente a la izquierda…
     esc.className = 'esc camino';
-    const tira = document.createElement('div'); tira.className = 'tira';
-    p.camino.forEach(src => {
-      const paso = document.createElement('div'); paso.className = 'paso';
-      const im = imagen(src, azar(-4, 4)); im.style.opacity = 1; paso.appendChild(im); tira.appendChild(paso);
+    const W = mesa.clientWidth, H = mesa.clientHeight, n = p.camino.length;
+    const cols = W / H > 1 ? 4 : 3, filas = Math.ceil(n / cols), cw = W / cols, ch = H / filas;
+    const puntos = p.camino.map((src, k) => {
+      const fila = Math.floor(k / cols), enFila = k % cols;
+      const col = fila % 2 ? cols - 1 - enFila : enFila;
+      return [(col + .5) * cw, (fila + .5) * ch];
     });
-    esc.appendChild(tira);
-    tira.style.transform = 'translateX(100vw)';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const fin = Math.min(0, innerWidth - tira.scrollWidth);
-      tira.style.transition = `transform ${dura + 1.2}s linear`;
-      tira.style.transform = `translateX(${fin}px)`;
-    }));
+    esc.innerHTML = `<svg><polyline points="${puntos.map(q => q.join(',')).join(' ')}"/></svg>`;
+    p.camino.forEach((src, k) => {
+      const paso = document.createElement('div'); paso.className = 'paso';
+      paso.style.left = puntos[k][0] + 'px'; paso.style.top = puntos[k][1] + 'px';
+      const im = imagen(src, azar(-5, 5));
+      im.style.maxWidth = (cw - 14) + 'px'; im.style.maxHeight = (ch - 12) + 'px';
+      paso.appendChild(im); esc.appendChild(paso);
+      despues(k * CONFIG.tiempos.porFoto * TIEMPO, () => im.classList.add('cae'));
+    });
   }
   mesa.appendChild(esc);
   ponerFondo(fotosDe(p)[0]);
