@@ -237,7 +237,7 @@
 </section>
 
 <section id="final">
-  <h2>¡Feliz cumpleaños!</h2>
+  <h2>¡Feliz cumpleaños, mamá!</h2>
   <p id="mensajeFinal"></p>
   <p class="firma" id="firma"></p>
   <button id="otraVez">↺ Ver de nuevo</button>
@@ -265,7 +265,7 @@ const CONFIG = {
   primerTiempo: 0.785, // segundo exacto del primer golpe de la canción
   tiempos: { puente: 7, foto: 8, fotoSinTexto: 5, porFoto: 3 },
   mensajeFinal: 'Gracias por cada abrazo, cada beso y cada sonrisa. Todo lo bonito que tenemos es gracias a ti.',
-  firma: 'Tu familia',
+  firma: 'Te queremos muchísimo',
   historia: [
     // 1 · La infancia: despacio, con los abuelos
     { puente: 'Érase una vez…' },
@@ -336,7 +336,7 @@ const CONFIG = {
 const TIEMPO = 60 / CONFIG.bpm, COMPAS = TIEMPO * 4; // segundos por tiempo y por compás
 
 document.getElementById('mensajeFinal').textContent = CONFIG.mensajeFinal;
-document.getElementById('firma').textContent = CONFIG.firma ? '— ' + CONFIG.firma : '';
+document.getElementById('firma').textContent = CONFIG.firma || '';
 
 // ---------- Partículas: brillos dorados, corazones y confeti ----------
 const cv = document.getElementById('fx'), ctx = cv.getContext('2d');
@@ -433,6 +433,7 @@ function escribir(c, texto, desde) {
   letras.forEach((l, k) => despues(desde + .25 + k * paso, () => l.classList.add('on')));
 }
 function completar() {
+  document.querySelectorAll('#mesa .foto').forEach(n => { n.style.animationDelay = '0s'; n.classList.add('cae'); });
   document.querySelectorAll('#viaje .l').forEach(n => n.classList.add('on'));
   document.querySelectorAll('#mesa .sello').forEach(n => n.classList.add('ver'));
 }
@@ -489,7 +490,7 @@ function mostrar(i) {
     p.grupo.forEach((src, k) => {
       const celda = document.createElement('div'); celda.className = 'celda';
       const im = imagen(src, azar(-3, 3)); celda.appendChild(im); esc.appendChild(celda);
-      despues(k * CONFIG.tiempos.porFoto * TIEMPO, () => im.classList.add('cae'));
+      im.style.animationDelay = (k * CONFIG.tiempos.porFoto * TIEMPO).toFixed(2) + 's'; im.classList.add('cae');
     });
   } else if (p.camino) {
     // todas en un plano, en zigzag: fila a la derecha, la siguiente a la izquierda…
@@ -508,7 +509,7 @@ function mostrar(i) {
       const im = imagen(src, azar(-5, 5));
       im.style.maxWidth = (cw - 14) + 'px'; im.style.maxHeight = (ch - 12) + 'px';
       paso.appendChild(im); esc.appendChild(paso);
-      despues(k * CONFIG.tiempos.porFoto * TIEMPO, () => im.classList.add('cae'));
+      im.style.animationDelay = (k * CONFIG.tiempos.porFoto * TIEMPO).toFixed(2) + 's'; im.classList.add('cae');
     });
   }
   mesa.appendChild(esc);
