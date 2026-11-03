@@ -96,21 +96,28 @@
   .pos {
     position: absolute; left: 50%; top: 50%;
     transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)));
-    transition: opacity .7s ease, filter .7s ease;
+    transition: opacity 1.4s ease, filter 1.4s ease;
   }
   .pos.atras { filter: brightness(.5) blur(1px); }
   .pos.vieja { opacity: 0; }
   .polaroid {
     position: relative; background: #fffdf7; padding: 8px 8px 26px;
     box-shadow: 0 18px 40px rgba(0,0,0,.55); transform: rotate(var(--rot));
-    animation: aterriza .6s cubic-bezier(.2,.9,.3,1.2) both;
+    animation: aterriza 1.3s cubic-bezier(.25,.8,.3,1) both;
   }
   .marco { overflow: hidden; }
   .polaroid img { display: block; max-width: min(88vw, 680px); max-height: calc(100vh - 260px); object-fit: contain; }
-  .pos:last-child .polaroid img { animation: kenburns 6s .4s ease-out forwards; }
+  .pos:last-child .polaroid img { animation: kenburns 9s .4s ease-out forwards; }
   @keyframes aterriza {
-    0% { opacity: 0; transform: rotate(calc(var(--rot) + 12deg)) scale(1.45); }
-    60% { opacity: 1; transform: rotate(var(--rot)) scale(.97); }
+    0% { opacity: 0; transform: rotate(calc(var(--rot) + 4deg)) translateY(-14px) scale(1.07); }
+    100% { opacity: 1; transform: rotate(var(--rot)) scale(1); }
+  }
+  /* las fotos destacadas aparecen despacio, como revelándose */
+  .pos.destacada .polaroid { animation: revela 2.4s ease-out both; }
+  .pos.destacada .polaroid img { filter: sepia(.35) brightness(.85); transition: filter 3s ease .6s; }
+  .pos.destacada.lista .polaroid img { filter: none; }
+  @keyframes revela {
+    0% { opacity: 0; transform: rotate(var(--rot)) scale(.94); }
     100% { opacity: 1; transform: rotate(var(--rot)) scale(1); }
   }
   @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.06); } }
@@ -216,43 +223,44 @@
      Las fotos van cayendo una encima de otra, grandes, al ritmo de la canción.
    - Duración en tiempos de la canción (138 bpm → 1 tiempo ≈ 0,43 s).
      Se puede cambiar un paso concreto con  t: 10
+   - destacar: true  hace que la foto aparezca despacio, sola en la mesa.
    ===================================================================== */
 const CONFIG = {
   cancion: 'musica/cancion.mp3', // Viva la Vida - Coldplay
   bpm: 138,
   primerTiempo: 0.785, // segundo exacto del primer golpe de la canción
-  tiempos: { puente: 6, conTexto: 6, sinTexto: 2 },
+  tiempos: { puente: 7, conTexto: 8, sinTexto: 4 },
   mensajeFinal: 'Gracias por cada abrazo, cada consejo y cada sonrisa. Todo lo bonito que tenemos empezó contigo. Te queremos muchísimo.',
   firma: 'Tu familia',
   historia: [
     // 1 · La infancia
     { puente: 'Érase una vez…' },
-    { foto: 'fotos/bebe-mama.jpg', texto: 'Bienvenida a una familia que te quiere con locura…' },
-    { foto: 'fotos/con-mama.jpg', texto: '…con una madre de cariño infinito…' },
-    { foto: 'fotos/con-papa.jpg', texto: '…un padre con dos niñas preciosas…' },
-    { foto: 'fotos/infancia.jpg', texto: '…y una hermana que está todos los días para cuidarte, y tú a ella… aunque se meta en líos.', t: 10 },
+    { foto: 'fotos/bebe-mama.jpg', texto: '…una niña que llegó a una familia que la quería con locura…', destacar: true, t: 16 },
+    { foto: 'fotos/con-mama.jpg', texto: '…con una madre de cariño infinito…', destacar: true, t: 16 },
+    { foto: 'fotos/con-papa.jpg', texto: '…un padre con dos niñas preciosas…', destacar: true, t: 16 },
+    { foto: 'fotos/infancia.jpg', texto: '…y una hermana que estaba todos los días para cuidarla, y ella a su hermana… aunque se metiera en líos.', destacar: true, t: 16 },
 
     // 2 · La juventud
     { puente: 'Y la niña fue creciendo…' },
-    { foto: 'fotos/mirador.jpg', texto: 'Fuiste conociendo gente nueva, divirtiéndote cada vez más…' },
+    { foto: 'fotos/mirador.jpg', texto: 'Esa niña eras tú. Fuiste conociendo gente nueva, divirtiéndote cada vez más…' },
     { foto: 'fotos/fiesta.jpg' },
     { foto: 'fotos/banco.jpg' },
     { foto: 'fotos/acantilado.jpg', texto: '…y descubriendo poco a poco lo que te gustaba y lo que no.' },
-    { foto: 'fotos/paris.jpg', texto: 'Y ese famoso viaje inesperado a París…', sello: 'PARÍS ✈' },
+    { foto: 'fotos/paris.jpg', texto: 'Y ese famoso viaje inesperado a París…', sello: 'PARÍS ✈', destacar: true, t: 10 },
 
     // 3 · Papá
-    { foto: 'fotos/novios-noche.jpg', texto: 'Hasta que, sin esperarlo, apareció un sueco en Bustarviejo…', t: 8 },
+    { foto: 'fotos/novios-noche.jpg', texto: 'Hasta que, sin esperarlo, apareció un sueco en Bustarviejo…', destacar: true, t: 11 },
     { foto: 'fotos/novios-laguna.jpg', texto: 'Os fuisteis conociendo…' },
     { foto: 'fotos/novios-paseo.jpg' },
     { foto: 'fotos/boda-tia.jpg' },
     { foto: 'fotos/novios-elegantes.jpg', texto: '…hasta llegar al momento decisivo.' },
-    { foto: 'fotos/boda.jpg', texto: 'El novio y la novia se convirtieron en marido y mujer.' },
+    { foto: 'fotos/boda.jpg', texto: 'El novio y la novia se convirtieron en marido y mujer.', destacar: true, t: 10 },
     { foto: 'fotos/brindis.jpg' },
-    { foto: 'fotos/novia.jpg', texto: 'Y ese día tú estabas preciosa.', t: 8 },
+    { foto: 'fotos/novia.jpg', texto: 'Y ese día tú estabas preciosa.', destacar: true, t: 12 },
 
     // 4 · La familia
-    { foto: 'fotos/bebe2.jpg', texto: 'Seguisteis creciendo juntos y al año llegó Paula, una pajarito que se convirtió en el centro del cariño.', t: 10 },
-    { foto: 'fotos/bebe.jpg', texto: 'Y como no teníais suficiente y queríais el niño… llegó un regordete.', t: 8 },
+    { foto: 'fotos/bebe2.jpg', texto: 'Seguisteis creciendo juntos y al año llegó Paula, una pajarito que se convirtió en el centro del cariño.', destacar: true, t: 12 },
+    { foto: 'fotos/bebe.jpg', texto: 'Y como no teníais suficiente y queríais el niño… llegó un regordete.', destacar: true, t: 11 },
     { foto: 'fotos/crecer-biberon.jpg', texto: 'Así se fue formando la familia…' },
     { foto: 'fotos/crecer-navidad.jpg' },
     { foto: 'fotos/cumple-bebes.jpg' },
@@ -267,8 +275,8 @@ const CONFIG = {
     { foto: 'fotos/comida-familiar.jpg' },
 
     // 5 · Las amistades
-    { foto: 'fotos/mati.jpg', texto: 'En la nueva casa conociste nuevas amistades, como Mati, y vuestros días de mercadillo…', t: 8 },
-    { foto: 'fotos/yoli.jpg', texto: '…o Yoli, una mujer con un corazón enorme.' },
+    { foto: 'fotos/mati.jpg', texto: 'En la nueva casa conociste nuevas amistades, como Mati, y vuestros días de mercadillo…', destacar: true, t: 10 },
+    { foto: 'fotos/yoli.jpg', texto: '…o Yoli, una mujer con un corazón enorme.', destacar: true, t: 10 },
     { foto: 'fotos/amigas-santuario.jpg', texto: 'Escapadas con amigos…' },
     { foto: 'fotos/amigos-norte.jpg' },
     { foto: 'fotos/con-tia.jpg', texto: '…y tu hermana, siempre a tu lado.' },
@@ -296,17 +304,17 @@ const CONFIG = {
     { foto: 'fotos/grad-paula.jpg', texto: 'Llegaron las graduaciones: primero Paula…' },
     { foto: 'fotos/grad-dani.jpg', texto: '…y después Dani.' },
     { foto: 'fotos/boda-familia.jpg', texto: 'Y la boda más reciente, la de Álex.' },
-    { foto: 'fotos/boda-alex-todos.jpg', texto: 'La familia no paraba de crecer, y ahora tenemos nuevos integrantes…', t: 8 },
+    { foto: 'fotos/boda-alex-todos.jpg', texto: 'La familia no paraba de crecer, y ahora tenemos nuevos integrantes…', destacar: true, t: 10 },
     { foto: 'fotos/casa-tia.jpg' },
     { foto: 'fotos/navidad-selfie.jpg', texto: 'Y las Navidades, cada año…' },
     { foto: 'fotos/navidad-brindis.jpg' },
-    { foto: 'fotos/navidad-gato.jpg', texto: '…hasta que llegó un nuevo integrante: ¡Aslan!' },
+    { foto: 'fotos/navidad-gato.jpg', texto: '…hasta que llegó un nuevo integrante: ¡Aslan!', destacar: true, t: 10 },
 
     // 8 · Hoy
-    { foto: 'fotos/los-cuatro.jpg', texto: 'Ahora los niños ya son mayores: trabajan… y uno hasta se ha ido de casa, un poquito lejos.', t: 9 },
+    { foto: 'fotos/los-cuatro.jpg', texto: 'Ahora los niños ya son mayores: trabajan… y uno hasta se ha ido de casa, un poquito lejos.', destacar: true, t: 11 },
     { foto: 'fotos/aeropuerto.jpg' },
-    { foto: 'fotos/abrazo.jpg', texto: '…pero vosotros seguís siendo los mejores padres, como desde el primer día.', t: 8 },
-    { foto: 'fotos/hoy.jpg', texto: 'Y ahora, 60 añitos… y lo mejor está por llegar.', t: 10 }
+    { foto: 'fotos/abrazo.jpg', texto: '…pero vosotros seguís siendo los mejores padres, como desde el primer día.', destacar: true, t: 11 },
+    { foto: 'fotos/hoy.jpg', texto: 'Y ahora, 60 añitos… y lo mejor está por llegar.', destacar: true, t: 14 }
   ]
 };
 /* ===================================================================== */
@@ -403,7 +411,7 @@ function escribir(c, texto, desde) {
   const pTxt = c.querySelector('p'); pTxt.textContent = '';
   for (const ch of texto) { const sp = document.createElement('span'); sp.className = 'l'; sp.textContent = ch; pTxt.appendChild(sp); }
   c.classList.remove('ver', 'sale'); void c.offsetWidth; c.classList.add('ver');
-  const letras = [...pTxt.children], paso = Math.min(.035, 1.3 / letras.length); // nunca tarda más de ~1,3 s
+  const letras = [...pTxt.children], paso = Math.min(.04, 1.8 / letras.length); // nunca tarda más de ~1,8 s
   letras.forEach((l, k) => despues(desde + .25 + k * paso, () => l.classList.add('on')));
 }
 function completar() {
@@ -432,10 +440,10 @@ function mostrar(i) {
 
   // la foto nueva cae encima del montón, grande y un poco torcida
   const pos = document.createElement('div'); pos.className = 'pos';
-  pos.style.setProperty('--dx', azar(-4, 4).toFixed(1) + 'vw');
+  pos.style.setProperty('--dx', (p.destacar ? 0 : azar(-4, 4)).toFixed(1) + 'vw');
   pos.style.setProperty('--dy', azar(-2, 2).toFixed(1) + 'vh');
   const pol = document.createElement('div'); pol.className = 'polaroid';
-  pol.style.setProperty('--rot', azar(-5, 5).toFixed(1) + 'deg');
+  pol.style.setProperty('--rot', (p.destacar ? azar(-1.5, 1.5) : azar(-5, 5)).toFixed(1) + 'deg');
   pol.innerHTML = '<div class="marco"><img alt=""></div>';
   pol.querySelector('img').src = p.foto;
   if (p.sello) {
@@ -443,12 +451,13 @@ function mostrar(i) {
     despues(COMPAS * .75, () => se.classList.add('ver'));
   }
   pos.appendChild(pol); mesa.appendChild(pos);
+  if (p.destacar) { pos.classList.add('destacada'); requestAnimationFrame(() => requestAnimationFrame(() => pos.classList.add('lista'))); }
   // las de debajo se oscurecen y las más antiguas desaparecen
   const capas = [...mesa.children];
   capas.forEach((c, k) => {
     const desde = capas.length - 1 - k;
     c.classList.toggle('atras', desde >= 1);
-    if (desde >= 3) c.classList.add('vieja');
+    if (desde >= 3 || (p.destacar && desde >= 1)) c.classList.add('vieja');
     if (desde >= 5) c.remove();
   });
   ponerFondo(p.foto);
