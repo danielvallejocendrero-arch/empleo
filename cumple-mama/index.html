@@ -153,8 +153,13 @@
   }
 
   /* el camino: todas las fotos de los niños en un solo plano, en zigzag, de pequeños a mayores */
-  .esc.camino svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .esc.camino polyline { fill: none; stroke: rgba(255,246,216,.45); stroke-width: 3; stroke-dasharray: 8 9; stroke-linecap: round; }
+  .hoja { position: absolute; inset: 0; }
+  .hoja svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  /* hojas del camino en el móvil: la primera ya está, las siguientes entran, todas menos la última se van */
+  @keyframes hojaPrimera { 0%, 92% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes hoja { 0% { opacity: 0; } 8%, 92% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes hojaFinal { 0% { opacity: 0; } 8%, 100% { opacity: 1; } }
   .paso { position: absolute; transform: translate(-50%, -50%); }
   .paso .foto { border-width: 5px; border-bottom-width: 15px; }
 
@@ -270,7 +275,7 @@ const CONFIG = {
     // 1 · La infancia: despacio, con los abuelos
     { puente: 'Érase una vez…' },
     { foto: 'fotos/bebe-mama.jpg', texto: '…una niña que llegó a una familia que la quería con locura…', destacar: true, t: 16 },
-    { foto: 'fotos/con-mama.jpg', texto: '…con una madre de cariño infinito…', destacar: true, t: 16 },
+    { foto: 'fotos/con-mama.jpg', texto: '…con una madre con un cariño infinito…', destacar: true, t: 16 },
     { foto: 'fotos/con-papa.jpg', texto: '…un padre con dos niñas preciosas…', destacar: true, t: 16 },
     { foto: 'fotos/infancia.jpg', texto: '…y una hermana que estaba todos los días para cuidarla, y ella a su hermana… aunque se metiera en líos.', destacar: true, t: 15 },
 
@@ -316,8 +321,8 @@ const CONFIG = {
     { foto: 'fotos/reforma.jpg', texto: 'Y como siempre, de vez en cuando alguna chapuza teníamos que hacer.', t: 10 },
 
     // 7 · La familia crece
-    { grupo: ['fotos/grad-dani.jpg', 'fotos/grad-paula.jpg'], t: 16,
-      textos: ['Llegaron las graduaciones: primero Dani…', '…y después Paula.'] },
+    { grupo: ['fotos/grad-paula.jpg', 'fotos/grad-dani.jpg'], t: 16,
+      textos: ['Llegaron las graduaciones: primero Paula…', '…y después Dani.'] },
     { foto: 'fotos/los-cuatro.jpg', texto: 'Y la boda más reciente, la de Álex.', t: 10 },
     { foto: 'fotos/boda-alex-todos.jpg', texto: 'La familia no paraba de crecer, y ahora tenemos nuevos integrantes…', destacar: true, t: 13 },
     { grupo: ['fotos/boda-familia.jpg', 'fotos/casa-tia.jpg', 'fotos/comida-familiar.jpg'], t: 12 },
@@ -493,23 +498,38 @@ function mostrar(i) {
       im.style.animationDelay = (k * CONFIG.tiempos.porFoto * TIEMPO).toFixed(2) + 's'; im.classList.add('cae');
     });
   } else if (p.camino) {
-    // todas en un plano, en zigzag: fila a la derecha, la siguiente a la izquierda…
+    // en zigzag: una fila hacia la derecha, la siguiente hacia la izquierda…
+    // En el móvil (vertical) se parte en páginas de 6 fotos en 2 columnas, para que se vean grandes.
     esc.className = 'esc camino';
-    const W = mesa.clientWidth, H = mesa.clientHeight, n = p.camino.length;
-    const cols = W / H > 1 ? 4 : 3, filas = Math.ceil(n / cols), cw = W / cols, ch = H / filas;
-    const puntos = p.camino.map((src, k) => {
-      const fila = Math.floor(k / cols), enFila = k % cols;
-      const col = fila % 2 ? cols - 1 - enFila : enFila;
-      return [(col + .5) * cw, (fila + .5) * ch];
-    });
-    esc.innerHTML = `<svg><polyline points="${puntos.map(q => q.join(',')).join(' ')}"/></svg>`;
-    p.camino.forEach((src, k) => {
-      const paso = document.createElement('div'); paso.className = 'paso';
-      paso.style.left = puntos[k][0] + 'px'; paso.style.top = puntos[k][1] + 'px';
-      const im = imagen(src, azar(-5, 5));
-      im.style.maxWidth = (cw - 14) + 'px'; im.style.maxHeight = (ch - 12) + 'px';
-      paso.appendChild(im); esc.appendChild(paso);
-      im.style.animationDelay = (k * CONFIG.tiempos.porFoto * TIEMPO).toFixed(2) + 's'; im.classList.add('cae');
+    const W = mesa.clientWidth, H = mesa.clientHeight, vertical = H > W;
+    const cols = vertical ? 2 : 4, porPagina = vertical ? 6 : p.camino.length;
+    const paginas = [];
+    for (let k = 0; k < p.camino.length; k += porPagina) paginas.push(p.camino.slice(k, k + porPagina));
+    const durPagina = dura / paginas.length;
+    paginas.forEach((fotos, pg) => {
+      const hoja = document.createElement('div'); hoja.className = 'hoja';
+      const filas = Math.ceil(fotos.length / cols), cw = W / cols, ch = H / filas;
+      const puntos = fotos.map((src, k) => {
+        const fila = Math.floor(k / cols), enFila = k % cols;
+        const col = fila % 2 ? cols - 1 - enFila : enFila;
+        return [(col + .5) * cw, (fila + .5) * ch];
+      });
+      hoja.innerHTML = `<svg><polyline points="${puntos.map(q => q.join(',')).join(' ')}"/></svg>`;
+      // cada hoja aparece a su tiempo y se va al llegar la siguiente (todo con CSS, sin temporizadores)
+      if (paginas.length > 1) {
+        const nombre = pg === 0 ? 'hojaPrimera' : pg === paginas.length - 1 ? 'hojaFinal' : 'hoja';
+        hoja.style.animation = `${nombre} ${durPagina.toFixed(2)}s ${(pg * durPagina).toFixed(2)}s both`;
+      }
+      const pasoFoto = Math.min(CONFIG.tiempos.porFoto * TIEMPO, durPagina * .7 / fotos.length);
+      fotos.forEach((src, k) => {
+        const paso = document.createElement('div'); paso.className = 'paso';
+        paso.style.left = puntos[k][0] + 'px'; paso.style.top = puntos[k][1] + 'px';
+        const im = imagen(src, azar(-4, 4));
+        im.style.maxWidth = (cw - 12) + 'px'; im.style.maxHeight = (ch - 10) + 'px';
+        paso.appendChild(im); hoja.appendChild(paso);
+        im.style.animationDelay = (pg * durPagina + k * pasoFoto).toFixed(2) + 's'; im.classList.add('cae');
+      });
+      esc.appendChild(hoja);
     });
   }
   mesa.appendChild(esc);
