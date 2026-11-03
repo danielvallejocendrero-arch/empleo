@@ -91,7 +91,7 @@
   /* trama de puntos, como el papel de los cómics */
   .trama { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.07) 1.2px, transparent 1.6px); background-size: 7px 7px; }
 
-  #mesa { position: absolute; left: 0; right: 0; top: 58px; bottom: 150px; }
+  #mesa { position: absolute; left: 0; right: 0; top: 54px; bottom: 140px; }
   .esc { position: absolute; inset: 0; transition: opacity 1.1s ease; }
   .esc.sale { opacity: 0; }
 
@@ -120,13 +120,20 @@
   @keyframes acerca { from { opacity: 1; transform: rotate(var(--rot)) scale(1); } to { opacity: 1; transform: rotate(var(--rot)) scale(1.05); } }
 
   /* varias fotos a la vez, grandes y juntas en el centro */
-  .esc.grupo { display: grid; gap: 14px; padding: 4px 14px; grid-template: 1fr 1fr / 1fr; max-width: 1100px; margin: 0 auto; }
+  .esc.grupo { display: grid; gap: 8px; padding: 2px 8px; grid-template: 1fr 1fr / 1fr; max-width: 1200px; margin: 0 auto; }
   .esc.grupo.n1 { grid-template: 1fr / 1fr; }
   .esc.grupo.n3 { grid-template: "a a" 1.25fr "b c" 1fr / 1fr 1fr; }
   .esc.grupo.n3 .celda:first-child { grid-area: a; }
   .esc.grupo.n4 { grid-template: 1fr 1fr / 1fr 1fr; }
   .celda { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 0; }
-  .celda .foto { max-width: 100%; max-height: 100%; }
+  .celda .foto { max-width: 100%; max-height: 100%; border-width: 6px; border-bottom-width: 18px; }
+  /* fotos apaisadas en el móvil: una debajo de otra, a todo lo ancho */
+  .esc.grupo.filas { grid-template: none; grid-auto-rows: 1fr; }
+  .esc.grupo.filas .celda { grid-area: auto !important; justify-content: center !important; align-items: center !important; }
+  /* fotos verticales en pantalla apaisada: todas en una fila */
+  .esc.grupo.columnas { grid-template: none; grid-auto-flow: column; grid-auto-columns: 1fr; }
+  .esc.grupo.columnas .celda { grid-area: auto !important; align-items: center !important; }
+
   /* en el móvil (vertical) */
   .n2 .celda:nth-child(1) { align-items: flex-end; }  .n2 .celda:nth-child(2) { align-items: flex-start; }
   .n3 .celda:nth-child(1) { align-items: flex-end; }
@@ -287,9 +294,9 @@ const CONFIG = {
     // { foto: 'fotos/bebe2.jpg', texto: 'Seguisteis creciendo juntos y al año llegó Paula…', destacar: true, t: 11 },
     // { foto: 'fotos/pajarito.jpg', texto: '…una pajarito que se convirtió en el centro del cariño.', destacar: true, t: 11 },
     { foto: 'fotos/bebe.jpg', texto: 'Y como no teníais suficiente y queríais el niño… llegó un regordete.', destacar: true, t: 13 },
-    { camino: ['fotos/crecer-biberon.jpg', 'fotos/crecer-navidad.jpg', 'fotos/cumple-bebes.jpg', 'fotos/mama.jpg',
+    { camino: ['fotos/crecer-comida.jpg', 'fotos/crecer-biberon.jpg', 'fotos/crecer-navidad.jpg', 'fotos/cumple-bebes.jpg', 'fotos/mama.jpg',
                'fotos/crecer-paseo.jpg', 'fotos/crecer-noche.jpg', 'fotos/crecer-piscina.jpg', 'fotos/deberes.jpg',
-               'fotos/crecer-comunion.jpg', 'fotos/crecer-flores.jpg', 'fotos/crecer-comida.jpg'], t: 42,
+               'fotos/crecer-comunion.jpg', 'fotos/crecer-flores.jpg'], t: 42,
       textos: ['Así se fue formando la familia…', 'Los niños fueron creciendo, y vosotros con ellos…', 'Llegaron los colegios, los veranos de piscina, las comuniones…'] },
 
     // 5 · Las amistades
@@ -311,18 +318,17 @@ const CONFIG = {
     { foto: 'fotos/reforma.jpg', texto: 'Y como siempre, de vez en cuando alguna chapuza teníamos que hacer.', t: 10 },
 
     // 7 · La familia crece
-    { grupo: ['fotos/grad-paula.jpg', 'fotos/grad-dani.jpg'], t: 16,
-      textos: ['Llegaron las graduaciones: primero Paula…', '…y después Dani.'] },
-    { foto: 'fotos/boda-familia.jpg', texto: 'Y la boda más reciente, la de Álex.' },
-    { foto: 'fotos/los-cuatro.jpg', t: 6 },
+    { grupo: ['fotos/grad-dani.jpg', 'fotos/grad-paula.jpg'], t: 16,
+      textos: ['Llegaron las graduaciones: primero Dani…', '…y después Paula.'] },
+    { foto: 'fotos/los-cuatro.jpg', texto: 'Y la boda más reciente, la de Álex.', t: 10 },
     { foto: 'fotos/boda-alex-todos.jpg', texto: 'La familia no paraba de crecer, y ahora tenemos nuevos integrantes…', destacar: true, t: 13 },
-    { grupo: ['fotos/casa-tia.jpg', 'fotos/comida-familiar.jpg'], t: 8 },
+    { grupo: ['fotos/boda-familia.jpg', 'fotos/casa-tia.jpg', 'fotos/comida-familiar.jpg'], t: 12 },
     { grupo: ['fotos/navidad-selfie.jpg', 'fotos/navidad-brindis.jpg', 'fotos/navidad-gato.jpg'], t: 14,
       textos: ['Y las Navidades, cada año…', '…hasta que llegó un nuevo integrante: ¡Aslan!'] },
 
     // 8 · Hoy
     { foto: 'fotos/aeropuerto-ahora.jpg', texto: 'Ahora los niños ya son mayores: trabajan… y uno hasta se ha ido de casa, un poquito lejos.', t: 12 },
-    { grupo: ['fotos/rio.jpg', 'fotos/abrazo.jpg'], t: 13,
+    { grupo: ['fotos/rio.jpg', 'fotos/abrazo.jpg', 'fotos/paula-mama.jpg'], t: 15,
       texto: '…pero vosotros seguís siendo los mejores padres, como desde el primer día.' },
     { foto: 'fotos/hoy.jpg', texto: 'Y ahora, 60 añitos… y lo mejor está por llegar.', destacar: true, t: 16 }
   ]
@@ -389,7 +395,8 @@ const tiemposDe = p => p.t || (p.puente ? CONFIG.tiempos.puente
 const inicios = [0];
 pasos.forEach(p => inicios.push(inicios[inicios.length - 1] + tiemposDe(p) * TIEMPO));
 // precarga todas las fotos para que salgan sin esperas
-pasos.forEach(p => fotosDe(p).forEach(f => { new Image().src = f; }));
+const cache = {};
+pasos.forEach(p => fotosDe(p).forEach(f => { cache[f] = new Image(); cache[f].src = f; }));
 
 const mesa = document.getElementById('mesa'), narrador = document.getElementById('narrador');
 const puente = document.getElementById('puente'), cartelaPuente = puente.querySelector('.cartela');
@@ -476,6 +483,11 @@ function mostrar(i) {
   } else if (p.grupo) {
     // varias fotos a la vez: van apareciendo una tras otra, al ritmo
     esc.className = 'esc grupo n' + Math.min(p.grupo.length, 4);
+    // elige la forma que deja las fotos más grandes
+    const apaisadas = p.grupo.filter(f => (cache[f] && cache[f].naturalWidth > cache[f].naturalHeight)).length;
+    const vertical = innerHeight > innerWidth;
+    if (vertical && p.grupo.length >= 3 && apaisadas >= p.grupo.length - 1) esc.classList.add('filas');
+    if (!vertical && apaisadas === 0) esc.classList.add('columnas');
     p.grupo.forEach((src, k) => {
       const celda = document.createElement('div'); celda.className = 'celda';
       const im = imagen(src, azar(-3, 3)); celda.appendChild(im); esc.appendChild(celda);
